@@ -1,13 +1,17 @@
 ---
-title: "ClimateChange"
+title: "United States Climate Change"
 author: "Jack Grafton"
 date: "3/6/2018"
 output: html_document
 ---
 
+###Abstract
+
 ##Introduction
+Climate change has been a concern in recent decades. The purpose of this paper is to present an analysis of how the climate has changed in the US from 1950 to 2008, based on temperature and precipitation change.
 
 ##Methods
+Temperature and precipitation data gathered as averages each year are used from weather stations all over the United States. The data are compiled into state averages for all weather stations within each state. These values are then converted into decadal averages for each state from 1950 to the most recent decade in order to determine the amount of change. These change values are mapped and plotted.
 
 ##Results
 
@@ -18,24 +22,71 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-```{r LoadData}
+```{r LoadData, echo=FALSE, message=FALSE}
 USTemp<- readRDS("USAAnnualTemp1950_2008.rds")
 USPcpn<- readRDS("USAAnnualPcpn1950_2008.rds")
 ```
 
 
-```{r CleanData}
+```{r CleanData, echo=FALSE, message=FALSE}
 AnnualTempState <- aggregate(data ~ year+state, USTemp, mean)
-AnnualPcpnState <- aggregate(data ~ year+state, USPcpn, mean)
+# This "AnnualTempState" variable created annual average temperature for each state by averaging all
+# of the individual weather stations within those states together.
 
 AnnualTempState$decade <- cut(AnnualTempState$year, breaks=c(1950,1960,1970,1980,1990,2000,2008,2010), labels=c(1950,1960,1970,1980,1990,2000,2008), 
-                              include.lowest=TRUE, right=FALSE)
+                       include.lowest=TRUE, right=FALSE)
 DecadalTempState <- aggregate(data ~ decade+state, data=AnnualTempState, mean)
+# This "DecadalTempState" variable created decadal averages for 
+# each state, 1950-2008 (this is including 2000-2008 as a decade).
 
+library(dplyr)
+TC <- (DecadalTempState %>%
+  group_by(.,state) %>%
+  arrange(decade, .by_group = TRUE) %>%
+  mutate(diff = data - lag(data, n = 6L, default=first(data)))
+)
+# This function to make TC shows difference data for 6 decades prior, so on each 2000-08 value it
+# shows the difference between that decade and the 1950-60 decade to indicate warming/cooling.
+
+TempChange <- dplyr::filter(TC, decade %in% c("2008"))
+# Filtered out the extra decadal "diff" change values to only show 
+# temp change between 1950 to 2008 decades.
+
+
+#---------------------------precipitation data clean up below-----------------------------
+AnnualPcpnState <- aggregate(data ~ year+state, USPcpn, mean)
 
 AnnualPcpnState$decade <- cut(AnnualPcpnState$year, breaks=c(1950,1960,1970,1980,1990,2000,2008,2010), labels=c(1950,1960,1970,1980,1990,2000,2008), 
                        include.lowest=TRUE, right=FALSE)
 DecadalPcpnState <- aggregate(data ~ decade+state, data=AnnualPcpnState, mean)
 
+library(dplyr)
+PC <- (DecadalPcpnState %>%
+  group_by(.,state) %>%
+  arrange(decade, .by_group = TRUE) %>%
+  mutate(diff = data - lag(data, n = 6L, default=first(data)))
+)
+
+PcpnChange <- dplyr::filter(PC, decade %in% c("2008"))
+
 ```
 
+```{r PresentData, echo=FALSE, message=FALSE}
+#----------Temperature Change:
+
+library(plotly)
+plot_ly(type="choropleth", locations=TempChange$state, 
+        locationmode="USA-states", z=TempChange$diff) %>% layout(geo=list(scope="usa"), 
+            title="Temperature Change from the 1950's to 2000's")
+#Created an interactive (hover-over to see individual state values) US heatmap 
+#showing the change in average temperature from decade 1950-1960 to 2000-2008
+
+
+#----------Precipitation Change:
+
+plot_ly(type="choropleth", locations=PcpnChange$state, 
+        locationmode="USA-states", z=PcpnChange$diff) %>% layout(geo=list(scope="usa"), 
+            title="Precipitation Change from the 1950's to 2000's")
+```
+
+##Discussion
