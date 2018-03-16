@@ -3,9 +3,12 @@ title: "United States Climate Change"
 author: "Jack Grafton"
 date: "3/6/2018"
 output: html_document
+bibliography: ClimateBib.bib
 ---
 
 ###Abstract
+Climate change is something that is continually being monitored today. In this paper, data is analyzed for temperature and precipitation change from 1950 to 2008. Overall, there was mostly cooling except on the east coast, and preciptation mostly increased. The "cooling" seeming to be due to a low drop in temperature in the 2000's compared to a high spike in temperature in the 1950's. 
+
 
 ##Introduction
 Climate change has been a concern in recent decades. The purpose of this paper is to present an analysis of how the climate has changed in the US from 1950 to 2008, based on temperature and precipitation change.
@@ -14,7 +17,7 @@ Climate change has been a concern in recent decades. The purpose of this paper i
 Temperature and precipitation data gathered as averages each year are used from weather stations all over the United States. The data are compiled into state averages for all weather stations within each state. These values are then converted into decadal averages for each state from 1950 to the most recent decade in order to determine the amount of change. These change values are mapped and plotted.
 
 ##Results
-
+Below are two interactive maps that show the amount of temperature and preciptation change the US has experienced from decade 1950 to 2008. Hover over a state to see the amount of temperature change. In addition to the maps, Graphs of yearly average temperature and precipitation for the entire United States are also shown.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -81,12 +84,36 @@ plot_ly(type="choropleth", locations=TempChange$state,
 #Created an interactive (hover-over to see individual state values) US heatmap 
 #showing the change in average temperature from decade 1950-1960 to 2000-2008
 
+library(ggplot2)
+atn <- aggregate(data ~ year, AnnualTempState, mean)
+AllTemp <- ggplot(data=atn, aes(x=year, y=data, xlab(Year)))+geom_line(colour="red")
+AllTemp + ggtitle("US Yearly Average Temperature") + xlab("Year") + ylab("Temperature")
+#Plotted yearly average temperature for entire US
+
 
 #----------Precipitation Change:
 
 plot_ly(type="choropleth", locations=PcpnChange$state, 
         locationmode="USA-states", z=PcpnChange$diff) %>% layout(geo=list(scope="usa"), 
             title="Precipitation Change from the 1950's to 2000's")
+
+apn <- aggregate(data ~ year, AnnualPcpnState, mean)
+AllPcpn <- ggplot(data=apn, aes(x=year, y=data, xlab(Year)))+geom_line(colour="blue")
+AllPcpn + ggtitle("US Yearly Average Precipitation") + xlab("Year") + ylab("Precipitation")
+
 ```
 
+
+The maps show slight warming on the east coast, but temperatures that have cooled everywhere else. Preciptation mostly increased for the states available.
+
 ##Discussion
+Through analyzing these data, we are only able to see warming of temperatures on the east coast from 1950-2008. mostly everywhere else seems to be cooling to some degree. For the states available, preciptation is mostly seen to have increased. When looking at the graph for total annual precipitation, it seems as if precipitation has more or less stayed within the same range. The fact that more cooling was observed shows climate change is also occuring, but it is not warming. The climate in general may still be warming, as uncertainty lies in only taking data decade by decade. 
+
+The 2000's may have been a time of abnormally cooler temperatures whilst the 1950's may have been a time of abnormally warmer temperatures. This seems almost entirely the case, when looking at the yearly average temperatures for the entire United States. there is a warm period in the 1950's and a cold period in the 2000's. When looking at the graph, upper extremes have seemed to become more common. More data may be necessary to absolutely declare a warming for this time period, but from the data given, the climate is definitely changing even if minute^1^. Global average temperatures, rather than US temperatures may be better for this type of absolute analysis. 
+
+##References
+
+```{r generateBibliography, echo=FALSE, eval=TRUE, warning=FALSE}
+
+bibtex::read.bib("ClimateBib.bib")
+```
