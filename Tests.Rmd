@@ -1,0 +1,40 @@
+---
+title: "Tests"
+author: "Jack Grafton"
+date: "3/30/2018"
+output: html_document
+---
+
+```{r Function1_source, echo=T}
+source("Function1.R")
+```
+
+```{r Function1_test_1, echo=T}
+yr <- seq("1950,1951,1952,1953,1954,1955,1956,1957,1958,1959")
+d <- AirDecMean(yr)
+if (length(d)==1)
+{
+  print("passed")
+} else
+{
+  print("failed")
+}
+```
+
+#Function2
+```{r Function2_source, echo=T}
+source("Function2.R")
+```
+
+```{r find_state_test, echo=T}
+ms<-"CO"
+seq<-"AKALCACODE"
+h<-find_fixed(ms,seq)
+if (length(h)==1 && h==7)
+{
+  print("passed")
+} else
+{
+  print("failed")
+}
+```
