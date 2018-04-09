@@ -28,6 +28,9 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r LoadData, echo=FALSE, message=FALSE}
 USTemp<- readRDS("USAAnnualTemp1950_2008.rds")
 USPcpn<- readRDS("USAAnnualPcpn1950_2008.rds")
+
+# ***The use of different chunks throughout this assignment to do different tasks highlights
+# one part of our lesson in modularity.
 ```
 
 
@@ -36,11 +39,16 @@ AnnualTempState <- aggregate(data ~ year+state, USTemp, mean)
 # This "AnnualTempState" variable created annual average temperature for each state by averaging all
 # of the individual weather stations within those states together.
 
+#***Constants are not written, rather given variable names.
+
 AnnualTempState$decade <- cut(AnnualTempState$year, breaks=c(1950,1960,1970,1980,1990,2000,2008,2010), labels=c(1950,1960,1970,1980,1990,2000,2008), 
                        include.lowest=TRUE, right=FALSE)
 DecadalTempState <- aggregate(data ~ decade+state, data=AnnualTempState, mean)
 # This "DecadalTempState" variable created decadal averages for 
 # each state, 1950-2008 (this is including 2000-2008 as a decade).
+
+# ***This part of the code uses modularity as it defines the decades for the information output,
+# and these can be edited easily - so one doesn't have to create an entire new variable.
 
 library(dplyr)
 TC <- (DecadalTempState %>%
@@ -51,9 +59,16 @@ TC <- (DecadalTempState %>%
 # This function to make TC shows difference data for 6 decades prior, so on each 2000-08 value it
 # shows the difference between that decade and the 1950-60 decade to indicate warming/cooling.
 
+# ***This part uses modularity in that it too can be easily edited. Either it can be grouped differently
+# or, importantly, single digits within this code can be changed if decades are added.
+
 TempChange <- dplyr::filter(TC, decade %in% c("2008"))
 # Filtered out the extra decadal "diff" change values to only show 
 # temp change between 1950 to 2008 decades.
+
+# ***Lastly, this part of the data cleaning uses modularity. The specified decade "2008" can be changed
+# with no significant rewriting. A variable here can also be added, possibly, with a for and if 
+# statement (based on number of decades) for additional modualarity.
 
 
 #---------------------------precipitation data clean up below-----------------------------
@@ -62,6 +77,8 @@ AnnualPcpnState <- aggregate(data ~ year+state, USPcpn, mean)
 AnnualPcpnState$decade <- cut(AnnualPcpnState$year, breaks=c(1950,1960,1970,1980,1990,2000,2008,2010), labels=c(1950,1960,1970,1980,1990,2000,2008), 
                        include.lowest=TRUE, right=FALSE)
 DecadalPcpnState <- aggregate(data ~ decade+state, data=AnnualPcpnState, mean)
+# ***Just with the code for temperature, this part uses modularity as the decades within the variable
+# can be easily changed without any major rewriting.
 
 library(dplyr)
 PC <- (DecadalPcpnState %>%
@@ -69,6 +86,8 @@ PC <- (DecadalPcpnState %>%
   arrange(decade, .by_group = TRUE) %>%
   mutate(diff = data - lag(data, n = 6L, default=first(data)))
 )
+# ***This uses modularity just like for temperature, and can be edited easily for added decades and
+# much of the code doesn't have to be rewritten due to these defined variables.
 
 PcpnChange <- dplyr::filter(PC, decade %in% c("2008"))
 
@@ -116,4 +135,6 @@ The 2000's may have been a time of abnormally cooler temperatures whilst the 195
 ```{r generateBibliography, echo=FALSE, eval=TRUE, warning=FALSE}
 
 bibtex::read.bib("ClimateBib.bib")
+
+# ***Uses external script to be read into rmarkdown, part of our lesson in advanced modularity.
 ```
