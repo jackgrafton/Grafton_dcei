@@ -6,6 +6,14 @@ output: html_document
 bibliography: ClimateBib.bib
 ---
 
+<!--***DAN: Decenet use of Git in the sense that you have a few commits whch took place as you worked on the assignment. You could improve by making more informative commit messages (you used things like "commit2"). -->
+
+<!--***DAN: Overall this shows some pretty sophisticated data manipulation, and is a well presented assignment, that addresses the question. So well done on what you did!
+
+There are some indications of the beginning of modular thinking. But I took off two points for *skipping* the part of the assignment in which you were asked to insert comments in your code indicating where you had used some of the 10 rules of modularity (go back and reread the assignment pdf). As you know, the grade is based on effortfull completion of all parts of the assignment. You have certainly demonstrated enough effort overall. But you skipped one of the main parts of the assignment, so I cannot ignore that. I will allow you to go back and add in some comments indicating where you used some of the 10 rules of modularity, or where you could have, and then if you do that I wll give you back points. If you choose to do this, just revise your Rmd by adding the comments, and then push a revision to git and then let me know by email that you have done so and I will go back and have a look.-->
+
+
+
 ###Abstract
 Climate change is something that is continually being monitored today. In this paper, data is analyzed for temperature and precipitation change from 1950 to 2008. Overall, there was mostly cooling except on the east coast, and preciptation mostly increased. The "cooling" seeming to be due to a low drop in temperature in the 2000's compared to a high spike in temperature in the 1950's. 
 
@@ -23,6 +31,7 @@ Below are two interactive maps that show the amount of temperature and preciptat
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+<!--***DAN:  I am glad to see chunk names, which helps with the modularity.-->
 
 
 ```{r LoadData, echo=FALSE, message=FALSE}
@@ -81,6 +90,17 @@ DecadalPcpnState <- aggregate(data ~ decade+state, data=AnnualPcpnState, mean)
 # can be easily changed without any major rewriting.
 
 library(dplyr)
+#***DAN: Don't need to include the library twice.
+#Also, the code below is much like the code above, 
+#which means you are missing an opportunity to
+#do something modular, by, say, creating a function
+#and applying it to both temp and precip. That
+#would also result in extensible code, since if you
+#got another weather variable you could just apply
+#the function to it. But the fact that you have 
+#done the same analysis and used essentially the 
+#same code on the two variables shows you are at 
+#least thinking in a somewhat modular way
 PC <- (DecadalPcpnState %>%
   group_by(.,state) %>%
   arrange(decade, .by_group = TRUE) %>%
@@ -97,11 +117,14 @@ PcpnChange <- dplyr::filter(PC, decade %in% c("2008"))
 #----------Temperature Change:
 
 library(plotly)
+#***DAN: calling library(plotly) once in your whole rmd is enough
 plot_ly(type="choropleth", locations=TempChange$state, 
         locationmode="USA-states", z=TempChange$diff) %>% layout(geo=list(scope="usa"), 
             title="Temperature Change from the 1950's to 2000's")
 #Created an interactive (hover-over to see individual state values) US heatmap 
 #showing the change in average temperature from decade 1950-1960 to 2000-2008
+
+#***DAN: this hover-over thing would be cool, but it did not work for my pdf. Is it only for html? Anyway, credit for cool idea.
 
 library(ggplot2)
 atn <- aggregate(data ~ year, AnnualTempState, mean)
@@ -122,11 +145,14 @@ AllPcpn + ggtitle("US Yearly Average Precipitation") + xlab("Year") + ylab("Prec
 
 ```
 
+<!--***DAN: There are some quite-sophisticated data manipulations above, so well done on that.-->
 
 The maps show slight warming on the east coast, but temperatures that have cooled everywhere else. Preciptation mostly increased for the states available.
 
 ##Discussion
 Through analyzing these data, we are only able to see warming of temperatures on the east coast from 1950-2008. mostly everywhere else seems to be cooling to some degree. For the states available, preciptation is mostly seen to have increased. When looking at the graph for total annual precipitation, it seems as if precipitation has more or less stayed within the same range. The fact that more cooling was observed shows climate change is also occuring, but it is not warming. The climate in general may still be warming, as uncertainty lies in only taking data decade by decade. 
+
+<!--***DAN: These results are similar to what I got when working with the provided data. Those data may have had something wrong with them, because I got quite a different answer (much more warming) after getting data using the api. -->
 
 The 2000's may have been a time of abnormally cooler temperatures whilst the 1950's may have been a time of abnormally warmer temperatures. This seems almost entirely the case, when looking at the yearly average temperatures for the entire United States. there is a warm period in the 1950's and a cold period in the 2000's. When looking at the graph, upper extremes have seemed to become more common. More data may be necessary to absolutely declare a warming for this time period, but from the data given, the climate is definitely changing even if minute^1^. Global average temperatures, rather than US temperatures may be better for this type of absolute analysis. 
 

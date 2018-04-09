@@ -1,0 +1,67 @@
+---
+title: "Tests"
+author: "Jack Grafton"
+date: "3/30/2018"
+output: pdf_document
+---
+
+#Function1
+
+```{r Function1_source, echo=T}
+source("Function1.R")
+```
+
+```{r Function1_test_1, echo=T}
+TestMatrix  <-  matrix(c(2, 4, 3, 1, 5, 7), nrow=3, ncol=2) 
+colnames(TestMatrix) <- c("MedianAQI.x", "MedianAQI.y")
+TestMatrix <- as.data.frame(TestMatrix)
+
+TestPC <- pctChange(TestMatrix, MedianAQI.x, MedianAQI.y)
+if (TestPC[3]==matrix(c(-50.0000, 25.0000, 133.3333)))
+{
+  print("passed")
+} else
+{
+  print("failed")
+}
+```
+
+
+#Function2
+```{r Function2_source, echo=T}
+source("Function2.R")
+```
+
+```{r find_state_test, echo=T}
+ms<-"CO"
+seq<-"AKALCACODE"
+h<-find_state(ms,seq)
+if (length(h)==1 && h==7)
+{
+  print("passed")
+} else
+{
+  print("failed")
+}
+```
+
+
+#Function3
+```{r Function3_source, echo=T}
+source("Function3.R")
+```
+
+```{r Find_Significant, echo=T}
+
+b <- matrix(c(20,40,35,25,50), nrow = 5, ncol = 1)
+bigs <- Find_Significant(b)
+if(bigs[1,]==FALSE && bigs[4,]==FALSE)
+{
+  print("passed")
+} else
+{
+  print("failed")
+}  
+
+```
+

@@ -1,0 +1,91 @@
+---
+title: "Cardiovascular Death Rate Change vs Air Quality Change"
+author: "Jack Grafton"
+date: "4/9/2018"
+output: pdf_document
+---
+#Introduction
+This project analyzes the change in death rate from cardiovascular disease vs the change in Air Quality Index from 1980 to 2014, and how they may relate.
+
+#Methods
+
+#Results
+Preliminary result figures show two maps that represent change in aqi and change in cardiovascular death rate over 1980 to 2014.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# This proposal is for a project that analyzes the change in death from cardiovascular disease
+# and compares it to the change in average aqi for each state, from the period 1980 to 2014.
+```
+
+```{r LoadData, echo=T}
+aqi1980 <- read.csv("AQI_1980.csv")
+aqi2014 <- read.csv("AQI_2014.csv")
+
+mortChange <- read.csv("CardioMort1980_2014.csv")
+
+```
+
+```{r Function1_Source, echo=T}
+source("Function1.R")
+```
+
+```{r CleanData, echo=T}
+STaqi80 <- aggregate(MedianAQI ~ State, aqi1980, mean)
+STaqi14 <- aggregate(MedianAQI ~ State, aqi2014, mean)
+
+
+STaqi <- merge(STaqi80, STaqi14, by.x = "State", by.y = "State")
+
+STaqiCR <- pctChange(STaqi, MedianAQI.x, MedianAQI.y)
+# Using Function 1
+
+STaqiChange <- aggregate(MedianAQI.z ~ State, STaqiCR, mean)
+
+```
+
+```{r Function3_Source, echo=T}
+source("Function3.R")
+```
+
+```{r AnalyzeData, echo=T}
+bigAQIchange <- Find_Significant(STaqiChange)
+#Finds the states that had a significant change in aqi
+bigMortChange <- Find_Significant(mortChange)
+
+
+```
+
+
+```{r PresentData, echo=T}
+STaqiChange$region <- tolower(STaqiChange$State)
+library(ggplot2)
+library(maps)
+states <- map_data("state")
+map.df <- merge(states,STaqiChange, by="region", all.STaqiChange=T)
+map.df <- map.df[order(map.df$order),]
+ggplot(map.df, aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill=MedianAQI.z))+
+  geom_path()+ 
+  scale_fill_gradientn(colours=rev(heat.colors(10)),na.value="grey90")+
+  coord_map()
+
+mortChange$region <- tolower(mortChange$State)
+library(ggplot2)
+library(maps)
+states <- map_data("state")
+map.df <- merge(states,mortChange, by="region", all.mortChange=T)
+map.df <- map.df[order(map.df$order),]
+ggplot(map.df, aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill=MortalityChange))+
+  geom_path()+ 
+  scale_fill_gradientn(colours=rev(heat.colors(10)),na.value="grey90")+
+  coord_map()
+
+```
+
+#Discussion
+In a preliminary analysis, there seems to be some similarity between the change in cardiovascular death rate and the change in Air Quality Index. This similarity is especially evident in some of the southern states. While death dates have gone down, the rates that did not go down as much can be compared to aqi levels that have not improved much or gotten worse.
+
+For the rest of the project, the plan is to more efficiently relate the two datasets in a meaningful way and display them in graphs as well as maps, and highlight key points where the death rate is not as improved in relation to AQI change.
