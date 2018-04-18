@@ -4,10 +4,19 @@ author: "Jack Grafton"
 date: "4/9/2018"
 output: pdf_document
 ---
+
+<!--***DAN: search for ***DAN in all docs to find my comments-->
+
+<!--***DAN: This is a suitable idea for a final project, but so far it is not developed very far. You will have to take it further to make it a really good final project.-->
+
+<!--DAN: Your grade on this unit testing assignment is 10/10, because the grade is based on effortful completion of all parts of the assignment. But that does not mean you did a perfect job - there are a number of areas for improvement, so please read the comments and let me know if anything is unclear.-->
+
 #Introduction
 This project analyzes the change in death rate from cardiovascular disease vs the change in Air Quality Index from 1980 to 2014, and how they may relate.
 
 #Methods
+
+<!--***DAN: No methods?-->
 
 #Results
 Preliminary result figures show two maps that represent change in aqi and change in cardiovascular death rate over 1980 to 2014.
@@ -15,10 +24,13 @@ Preliminary result figures show two maps that represent change in aqi and change
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 
+#***DAN:This text should be outside a chunk, not in one.
+
 # This proposal is for a project that analyzes the change in death from cardiovascular disease
 # and compares it to the change in average aqi for each state, from the period 1980 to 2014.
 ```
 
+<!--***DAN: need to cite where you got these data-->
 ```{r LoadData, echo=T}
 aqi1980 <- read.csv("AQI_1980.csv")
 aqi2014 <- read.csv("AQI_2014.csv")

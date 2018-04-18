@@ -4,6 +4,8 @@
 
 # newxb is a variable that finds xb input values more than 30 or less than -30
 
+#***DAN: this is not bad as a function spec.
+
 Find_Significant <- function(xb)
   {
   newxb <- (xb > 30 | xb < -30)
