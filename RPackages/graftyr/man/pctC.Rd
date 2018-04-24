@@ -9,9 +9,9 @@ pctC(dataset, x, y)
 \arguments{
 \item{dataset}{Dataframe or matrix being used.}
 
-\item{x}{Name of column 1.}
+\item{x}{Name of first column}
 
-\item{y}{Name of column 2.}
+\item{y}{Name of second column}
 }
 \value{
 The a column of percent changes from \code{x} to \code{y}

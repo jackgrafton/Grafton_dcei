@@ -5,6 +5,10 @@ date: "3/30/2018"
 output: pdf_document
 ---
 
+<!--***DAN: search for ***DAN in all docs to find my comments-->
+
+<!--***DAN: You do have a tag called halfway, but when I checked it out, it was not halfway, it was before you started. There was no point in the repo's history, as far as I could tell, at which you had created function species and tests but not yet written the function. So you seem to have missed the point on writing specs, then tests, then the functions themselves. Maybe want to review that. That said, you seem to have gotten the point about unit testing. Although your functions are simple, your tests are generally apprpriate.-->
+
 #Function1
 
 ```{r Function1_source, echo=T}
@@ -16,7 +20,15 @@ TestMatrix  <-  matrix(c(2, 4, 3, 1, 5, 7), nrow=3, ncol=2)
 colnames(TestMatrix) <- c("MedianAQI.x", "MedianAQI.y")
 TestMatrix <- as.data.frame(TestMatrix)
 
+#***DAN: your function will not run unless the second and third arguments are
+#the specific values "MedianAQI.x", "MedianAQI.y". To see that, uncomment
+#the below lines and knit.
+#colnames(TestMatrix) <- c("name.x", "name.y")
+#TestMatrix
+#TestPC <- pctChange(TestMatrix, MedianAQI.x, MedianAQI.y)
+
 TestPC <- pctChange(TestMatrix, MedianAQI.x, MedianAQI.y)
+TestPC
 if (TestPC[3]==matrix(c(-50.0000, 25.0000, 133.3333)))
 {
   print("passed")
