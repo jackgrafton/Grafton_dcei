@@ -1,0 +1,91 @@
+---
+title: "Cardiovascular Disease and Air Quality"
+author: "Jack Grafton"
+date: "4/24/2018"
+output: html_document
+---
+
+#Introduction
+This project analyzes the change in death rate from cardiovascular disease vs the change in Air Quality Index from 1980 to 2014, and how they may relate.
+
+#Methods
+
+
+#Results
+Preliminary result figures show two maps that represent change in aqi and change in cardiovascular death rate over 1980 to 2014.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+#***DAN:This text should be outside a chunk, not in one.
+```
+
+<!--***DAN: need to cite where you got these data-->
+```{r LoadData, echo=T}
+aqi1980 <- read.csv("AQI_1980.csv")
+aqi2014 <- read.csv("AQI_2014.csv")
+
+mortChange <- read.csv("CardioMort1980_2014.csv")
+
+```
+
+```{r load_packages, echo=T}
+devtools::install_github("jackgrafton/Grafton_dcei/RPackages/graftyr")
+library(graftyr)
+```
+
+```{r CleanData, echo=T}
+STaqi80 <- aggregate(MedianAQI ~ State, aqi1980, mean)
+STaqi14 <- aggregate(MedianAQI ~ State, aqi2014, mean)
+
+STaqi <- merge(STaqi80, STaqi14, by.x = "State", by.y = "State")
+
+STaqiCR <- pctC(STaqi, x = "MedianAQI.x", y = "MedianAQI.y")
+
+STaqiChange <- aggregate(z ~ State, STaqiCR, mean)
+
+```
+
+
+```{r AnalyzeData, echo=T}
+bigAQIchange <- findSignificant(STaqiChange)
+#Finds the states that had a significant change in aqi
+bigMortChange <- findSignificant(mortChange)
+
+posAQI <- findPositive(STaqiChange)
+negAQI <- findNegative(STaqiChange)
+```
+
+
+```{r PresentData, echo=T}
+STaqiChange$region <- tolower(STaqiChange$State)
+library(ggplot2)
+library(maps)
+states <- map_data("state")
+map.df <- merge(states,STaqiChange, by="region", all.STaqiChange=T)
+map.df <- map.df[order(map.df$order),]
+ggplot(map.df, aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill=z))+
+  geom_path()+ 
+  scale_fill_gradientn(colours=rev(heat.colors(10)),na.value="grey90")+
+  coord_map()
+
+mortChange$region <- tolower(mortChange$State)
+
+map(database = "state", col="black", fill=FALSE)
+map(database = "state", regions = posAQI$State, col= "red", fill=TRUE, add=TRUE)
+map(database = "state", regions = negAQI$State, col="green", fill=TRUE, add=TRUE)
+
+```
+
+```{r, out.width= '30%' }
+
+map(database = "state", col="black", fill=FALSE)
+map(database = "state", regions = posAQI$State, col= "red", fill=TRUE, add=TRUE)
+map(database = "state", regions = negAQI$State, col="green", fill=TRUE, add=TRUE)
+```
+
+#Discussion
+In a preliminary analysis, there seems to be some similarity between the change in cardiovascular death rate and the change in Air Quality Index. This similarity is especially evident in some of the southern states. While death dates have gone down, the rates that did not go down as much can be compared to aqi levels that have not improved much or gotten worse.
+
+For the rest of the project, the plan is to more efficiently relate the two datasets in a meaningful way and display them in graphs as well as maps, and highlight key points where the death rate is not as improved in relation to AQI change.
