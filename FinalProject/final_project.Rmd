@@ -57,7 +57,7 @@ negAQI <- findNegative(STaqiChange)
 ```
 
 
-```{r PresentData, echo=T}
+```{r PresentData, echo=T, fig.cap=c("Figure 1: This map shows state AQI changes since 1980. Darker red values indicate higher aqi, while darker green values indicate lower aqi.", "Figure 2: This map shows change in mortality from cardiovasular disease. Green values indicate greater improvement, while red values indicate lower improvement based on a midpoint change mean of -48%.")}
 STaqiChange$region <- tolower(STaqiChange$State)
 library(ggplot2)
 library(maps)
@@ -67,10 +67,34 @@ map.df <- map.df[order(map.df$order),]
 ggplot(map.df, aes(x=long,y=lat,group=group))+
   geom_polygon(aes(fill=z))+
   geom_path()+ 
-  scale_fill_gradientn(colours=rev(heat.colors(10)),na.value="grey90")+
+  theme(axis.title.y=element_blank(),
+        axis.title.x=element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        rect = element_blank())+
+  scale_fill_gradient2(low="green", high="red", midpoint=0, na.value="grey10")
   coord_map()
 
+#~~~~~~~~~~~~~~~
 mortChange$region <- tolower(mortChange$State)
+states <- map_data("state")
+map.df <- merge(states,mortChange, by="region", all.mortChange=T)
+map.df <- map.df[order(map.df$order),]
+ggplot(map.df, aes(x=long,y=lat,group=group))+
+  geom_polygon(aes(fill=MortalityChange))+
+  geom_path()+ 
+  theme(axis.title.y=element_blank(),
+        axis.title.x=element_blank(),
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        rect = element_blank())+
+  scale_fill_gradient2(low="green", high="red", midpoint=-48, na.value="grey10")
+  coord_map()
+```
+
+```{r, out.width= '30%', fig.cap="Red states increased in AQI since 1980, while green states decreased. White states do not have enough data to determine change." }
 
 map(database = "state", col="black", fill=FALSE)
 map(database = "state", regions = posAQI$State, col= "red", fill=TRUE, add=TRUE)
@@ -78,12 +102,7 @@ map(database = "state", regions = negAQI$State, col="green", fill=TRUE, add=TRUE
 
 ```
 
-```{r, out.width= '30%' }
 
-map(database = "state", col="black", fill=FALSE)
-map(database = "state", regions = posAQI$State, col= "red", fill=TRUE, add=TRUE)
-map(database = "state", regions = negAQI$State, col="green", fill=TRUE, add=TRUE)
-```
 
 #Discussion
 In a preliminary analysis, there seems to be some similarity between the change in cardiovascular death rate and the change in Air Quality Index. This similarity is especially evident in some of the southern states. While death dates have gone down, the rates that did not go down as much can be compared to aqi levels that have not improved much or gotten worse.
