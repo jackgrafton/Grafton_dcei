@@ -7,24 +7,20 @@ bibliography: finalBib.bib
 ---
 
 #Introduction
-This project analyzes the change in death rate from cardiovascular disease[@IMHE2017] vs the change in Air Quality Index from 1980 to 2014[@EPA2017], and how they may relate.
 
-It is already known that bad air quality can lead to cardiovasucular issues [@Brook2010]. 
-
+It is already known that bad air quality can lead to cardiovasucular issues [@Brook2010]. What does this relationship look like, however, in change since 1980? Seeing the result of that data will help reveal the degree of importance air quality is to cardiovascular health. This project analyzes the change in death rate from cardiovascular disease[@IMHE2017] vs the change in Air Quality Index from 1980 to 2014[@EPA2017], and how they may relate.
 
 #Methods
 
+Data in this report is taken from databanks within the EPA and IMHE. This data is then turned into figures that help the viewer see the relationship between the two sets of data for each: change in death rate from caridovasulcar disease from 1980-2014, and change in air quality index from 1980-2014.
 
 #Results
-Preliminary result figures show two maps that represent change in aqi and change in cardiovascular death rate over 1980 to 2014.The second map (Figure 2) shows the change in mortality from cardiovascular disease. The midpoint for this map is the average of all states' data: -47%; this is compared to the state AQI change's midpoint of 0%.
+Result figures show maps that represent change in aqi and change in cardiovascular death rate over 1980 to 2014.The second map (Figure 2) shows the change in mortality from cardiovascular disease. The midpoint for this map is the average of all states' data: -47%; this is compared to the state AQI change's midpoint of 0%. The third map highlights state AQI changes that are either positive or negative.
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-
-#***DAN:This text should be outside a chunk, not in one.
 ```
 
-<!--***DAN: need to cite where you got these data-->
 ```{r LoadData, echo=F}
 aqi1980 <- read.csv("AQI_1980.csv")
 aqi2014 <- read.csv("AQI_2014.csv")
@@ -77,7 +73,8 @@ ggplot(map.df, aes(x=long,y=lat,group=group))+
         axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         rect = element_blank())+
-  scale_fill_gradient2(low="green", high="red", midpoint=0, na.value="grey10")
+  scale_fill_gradient2(low="green", high="red", midpoint=0, na.value="grey10")+
+  labs(title = "State AQI changes from 1980-2014", fill = "AQI % Change")
 
 #Cardiovascular Mortality Change~~~~~~~~~~~~~~~
 mortChange$region <- tolower(mortChange$State)
@@ -93,11 +90,13 @@ ggplot(map.df, aes(x=long,y=lat,group=group))+
         axis.text.y = element_blank(),
         axis.ticks = element_blank(),
         rect = element_blank())+
-  scale_fill_gradient2(low="green", high="red", midpoint=-48, na.value="grey10")
+  scale_fill_gradient2(low="green", high="red", midpoint=-48, na.value="grey10")+
+  labs(title = "Change in Mortality rates due to Cardiovacular disease from 1980-2014", 
+       fill = "Mortality % Change")
 ```
 
 This next map shows additional analysis for comparison; it shows the states that increased in AQI and states that decreased in AQI.
-```{r, out.width= '30%', echo=F, fig.cap="Red states increased in AQI since 1980, while green states decreased. White states do not have enough data to determine change.", message=FALSE }
+```{r negativePositiveAQI, out.width= '30%', echo=F, fig.cap="Figure 3: Red states increased in AQI since 1980, while green states decreased. White states do not have enough data to determine change.", message=FALSE }
 
 map(database = "state", col="black", fill=FALSE)
 map(database = "state", regions = posAQI$State, col= "red", fill=TRUE, add=TRUE)
@@ -108,11 +107,13 @@ map(database = "state", regions = negAQI$State, col="green", fill=TRUE, add=TRUE
 
 
 #Discussion
-In a preliminary analysis, there seems to be some similarity between the change in cardiovascular death rate and the change in Air Quality Index. This similarity is especially evident in some of the southern states. While death dates have gone down, the rates that did not go down as much can be compared to aqi levels that have not improved much or gotten worse.
+In an overall analysis, there seems to be some similarity between the change in cardiovascular death rate and the change in Air Quality Index. This similarity is especially evident in some of the southern states. While death rates due to cardiovascular disease have gone down, the rates that did not go down as much can be compared to aqi levels that have not improved much or gotten worse.
 
-For the rest of the project, the plan is to more efficiently relate the two datasets in a meaningful way and display them in graphs as well as maps, and highlight key points where the death rate is not as improved in relation to AQI change.
+On much of the east and west coasts of the United States, air quality has improved and cardiovascular disease has reduced beyond the average. Let's look at the southern states, though: cardiovascular disease rates in states like Florida and Georgia did not improve as much as the northern east coast, and at the same time these states air quality got worse. Most of the south, except for Alabama, were both below average in reduction in cardiovascular disease and had worsened air quality. It's unwise to say this result could be from southerners eating too much cajun food. The mutuality between these data could possibly be explained by winds carrying sand particulate matter from the Sahara, however the degree of this happening would be a good topic for another study. 
+
+For the rest of the United States that haven't been discussed, there doesn't seem to be much correlation, which could be due to various other factors that influence cardiovascular disease rates much more than air quality.  Idaho had the most improved air quality out of all ofall states, yet still had below average improvement in cardiovascular disease rate. Another study could analyze particulate matter emission changes vs. ozone changes, and then compare that to the cardiovascular disease change presented here. For this project, they are put together in an AQI. However these different substance could vary in concentrations across the US, and one could contribute to the development of cardiovascular disease more often than the other.
 
 #Conclusion
-
+In conclusion, the relationship between Air Quality Index change from 1980-2014 and Cardiovascular disease rates from 1980-2014 show some regional correlation in the United States, however mostly on the coasts. This relationship remains inconclusive for more landlocked states and the midwest. The reason why could be analyzed in a future study with new data, or look at both ozone and particulate emissions exclusively: how prevalent are they in the south compared to the US, and which is more dangerous to the cardiovascular system?
 
 #References
